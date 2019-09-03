@@ -50,7 +50,7 @@ def route(request):
 
             json_body.append({
                 'summary': blog[3],
-                'url': 'https://aidoru.tk/blog/{}'.format(str(blog[0]).zfill(7)),
+                'url': 'https://blog.nogi-call.cn//blog/{}'.format(str(blog[0]).zfill(7)),
                 'post': int(time.mktime(blog[1].timetuple())) - 9 * 3600,
                 'author': blog[4],
                 'title': blog[2]

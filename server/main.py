@@ -14,8 +14,8 @@ def init(loop):
     app = web.Application(loop = loop)
     app.on_startup.append(create_pool)
 
-    # fernet_key = fernet.Fernet.generate_key()
-    fernet_key = b'wAYavr8zyR2kvmf1uXGko4MdGJ8cpDFOUW0lHIxoQ-I='
+    fernet_key = fernet.Fernet.generate_key()
+    #fernet_key = b'wAYavr8zyR2kvmf1uXGko4MdGJ8cpDFOUW0lHIxoQ-I='
     secret_key = base64.urlsafe_b64decode(fernet_key)
 
     setup(app, EncryptedCookieStorage(secret_key, max_age = 1296000))

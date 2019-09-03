@@ -53,7 +53,7 @@ const timeFormat = type => {
 	let post = new Date(shareData.post)
 	
 	let time = stringify(post.getHours()) + ':' + stringify(post.getMinutes())
-	let date = stringify(post.getMonth() + 1) + '/' + stringify(post.getDate()) + ' ' + time
+	let date = '20' + stringify(post.getYear()) + '/' + stringify(post.getMonth() + 1) + '/' + stringify(post.getDate()) + ' ' + time
 
 	let today = new Date()
 	today.setHours(0, 0, 0, 0)

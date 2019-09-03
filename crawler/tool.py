@@ -72,3 +72,8 @@ def clip_text(text):
     snippet = re.sub(r'\s$', '', snippet)
 
     return snippet
+
+def get_photo_path_id(html):
+    res = re.findall(r"/(\d{4})/(\d{2})/(\d{2})/(\d{7})/(\d{4}).", html);
+
+    return '' if (len(res) == 0) else res[0][3]

@@ -15,6 +15,11 @@ parser.add_argument(
     default = 1, type = int,
     help = 'specify page number'
 )
+parser.add_argument(
+    '-s', metavar = 'url', dest = 'url',
+    help = 'specify page url'
+)
+
 group = parser.add_mutually_exclusive_group()
 group.add_argument(
     '-k', dest = 'keyakizaka', action = 'store_true',
@@ -38,6 +43,8 @@ elif args.keyakizaka:
     capture.deal(connect, capture.keyakizaka_only(args.page))
 elif args.hinatazaka:
     capture.deal(connect, capture.hinatazaka_only(args.page))
+elif args.url:
+    capture.deal(connect, capture.single_page(args.url))
 else:
     capture.deal(connect, capture.all())
 

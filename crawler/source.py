@@ -46,11 +46,14 @@ def from_hinatazaka_pc_site(page = 1):
         result.append([post, author, title, text, link])
     return result
 
-def from_nogizaka_pc_site(page = 1):
-    html = fetch('http://blog.nogizaka46.com/?p={}'.format(page)).decode('utf-8')
+def from_nogizaka_pc_site(page = 1, url = ''):
+    if page == 0:
+        html = fetch(url).decode('utf-8')
+    else:
+        html = fetch('http://blog.nogizaka46.com/?p={}'.format(page)).decode('utf-8')
     regexp = re.compile(r'<h1 class="clearfix">[\s\S]+?<span class="author">([\s\S]+?)</span>\s*<span class="entrytitle">\s*<a href="([\s\S]+?)" rel="bookmark">([\s\S]*?)</a>[\s\S]+?<div class="entrybody">([\s\S]+?)</div>\s*?<div class="entrybottom">[^\d]*([\s\S]+?)[^\d]*<a href="([^"]+?)">', re.M|re.I|re.S)
     entries = regexp.findall(html)
-    assert len(entries) == 5
+    #assert len(entries) == 5
     result = []
     for entry in entries:
         author = entry[0]

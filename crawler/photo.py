@@ -60,7 +60,7 @@ def process(meta, text):
             continue
 
         photo_path = locate(meta, index, extension, 'normal')
-        status = download(url, photo_path)
+        status = download(url, photo_path, meta)
         if status == 1:
             size = measure(photo_path)
             transfer(photo_path, photo_path.replace('../photo/', ''))
@@ -83,7 +83,7 @@ def process(meta, text):
 
     return text, thumbnail, images
 
-def download(url, path):
+def download(url, path, meta):
 
 #     test = requests.get('http://localhost:8080/search?url=' + base64.urlsafe_b64encode(url.encode('utf-8')).decode('utf-8'), allow_redirects = False)
 #     if test.status_code == 302: url = test.headers['location']
@@ -100,9 +100,34 @@ def download(url, path):
         retry = 0
         while True:
             try:
+
                 response = session.get(url, timeout = 5)
-                if response.text.find(u'この画像は保存期間が終了したため削除されました') != -1: return 2
-            except:
+                find_photo = 0
+                if response.text.find(u'この画像は保存期間が終了したため削除されました') != -1:
+                    # If photo is outdated, try to find in aidoru.tk.
+                    # If aidoru.tk have not archived this photo, try to download raw low-res thumbnail.
+                    b=path.replace('-', '/').replace('.jpg', '').split('/')
+                    url_available = [
+                            path.replace('../photo', 'https://cdn.aidoru.tk'),
+                            'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2], b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2], b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2], b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2].replace("tou", "to"), b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2].replace("tou", "to"), b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2].replace("tou", "to"), b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                    ]
+                    for i in range(len(url_available)):
+                        url = url_available[i]
+                        response = session.get(url, timeout = 5)
+                        if response.text.find(u'NoSuchKey') == -1 and response.status_code != 404:
+                            find_photo = 1
+                            break
+                    if find_photo == 0:
+                        log_err(path)
+                        return 2
+
+            except Exception as err:
+                print("ERROR:{}".format(err))
                 retry += 1
                 if retry > 10: return 0
             else:
@@ -130,6 +155,10 @@ def download(url, path):
             return 1
     return 0
 
+def log_err(path):
+    errf = open('../404-list', 'a+')
+    errf.write(path+'\n')
+    errf.close()
 
 def measure(path):
     image = PIL.Image.open(path)

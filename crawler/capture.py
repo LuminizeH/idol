@@ -29,6 +29,16 @@ def all():
     blogs.sort(key = operator.itemgetter(0), reverse = False)
     return blogs
 
+# Author: LH
+# Feat: Crawl any page
+def single_page(url = "http://blog.nogizaka46.com/manatsu.akimoto/?p=1"):
+    if "nogizaka" in url:
+        blogs = source.from_nogizaka_pc_site(0, url)
+    else:
+        blogs = source.from_keyakizaka_pc_site_single(url)
+    blogs.sort(key = operator.itemgetter(0), reverse = False)
+    return blogs
+
 def deal(connect, blogs):
     fresh = []
     cursor = connect.cursor()
@@ -48,6 +58,8 @@ def deal(connect, blogs):
         title = tool.purify_text(title)
         snippet = tool.clip_text(text)
 
+        photo_path_id = tool.get_photo_path_id(html)
+
         author = member.bind(author, feed_id)
         author, title = member.identify(author, title)
 
@@ -64,7 +76,7 @@ def deal(connect, blogs):
             connect.commit()
             indicator('list save')
 
-        (text, thumbnail, images) = photo.process({'feed_id': feed_id, 'romaji': romaji,'post': post}, text)
+        (text, thumbnail, images) = photo.process({'feed_id': feed_id, 'romaji': romaji, 'post': post, 'photo_path_id': photo_path_id}, text)
 
         try:
             cursor.executemany('insert into photo values({}, %s, %s, %s, %s, %s, %s)'.format(feed_id), images)

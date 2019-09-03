@@ -76,11 +76,23 @@ def no_need_translate(text):
     else:
         return False
 
+# TODO
+# Multi process invoke Baidu Translate at the same time may throw this exception.
+# Exception Message:
+#   (line 87) TypeError: 'NoneType' object is not subscriptable
 def discard_punctuation(text):
-    if text[-1] in {'。', '！', '？'}:
-        return text[0:-1]
-    else:
-        return text
+    retry = 0
+    while True:
+        try:
+            if text[-1] in {'。', '！', '？'}:
+                return text[0:-1]
+            else:
+                return text
+        except:
+            retry += 1
+            if retry > 10: return text
+        else:
+            break
 
 def translate_unit(matched):
     original = matched.group('part')
