@@ -3,6 +3,7 @@
 import datetime, os, re, subprocess, math, json, base64
 import requests, PIL.Image
 import secret
+import oss2
 
 def locate(meta, index, extension, usage):
     host_dir = '../'
@@ -18,20 +19,26 @@ def locate(meta, index, extension, usage):
         return os.path.join(photo_dir, '{}-{}-{}.{}'.format(date, meta['feed_id'].zfill(7), str(index).zfill(4), extension))
 
 def transfer(path, name):
-#     subprocess.Popen(['gsutil', 'cp', path, path.replace('../photo/','gs://aidoru-storage/')]).wait()
-    response = requests.post(
-        url = 'https://www.googleapis.com/oauth2/v4/token',
-        headers = {'content-type': 'application/x-www-form-urlencoded', 'user-agent': 'google-oauth-playground'},
-        data = 'client_id={}&client_secret={}&grant_type=refresh_token&refresh_token={}'.format(secret.storage['client_id'], secret.storage['client_secret'], secret.storage['refresh_token'])
-    )
-    access_token = json.loads(response.text)['access_token']
-    response = requests.post(
-        url = 'https://www.googleapis.com/upload/storage/v1/b/{}/o'.format(secret.storage['bucket_name']),
-        params = {'uploadType': 'media', 'name': name},
-        headers = {'Authorization': 'Bearer {}'.format(access_token), 'Content-Type': {'.gif': 'image/gif', '.jpg': 'image/jpeg', '.png': 'image/png'}[os.path.splitext(path)[-1]]},
-        data = open(path, 'rb').read()
-    )
-    assert response.status_code == 200
+#    response = requests.post(
+#        url = 'https://www.googleapis.com/oauth2/v4/token',
+#        headers = {'content-type': 'application/x-www-form-urlencoded', 'user-agent': 'google-oauth-playground'},
+#        data = 'client_id={}&client_secret={}&grant_type=refresh_token&refresh_token={}'.format(secret.storage['client_id'], secret.storage['client_secret'], secret.storage['refresh_token'])
+#    )
+#    access_token = json.loads(response.text)['access_token']
+#    response = requests.post(
+#        url = 'https://www.googleapis.com/upload/storage/v1/b/{}/o'.format(secret.storage['bucket_name']),
+#        params = {'uploadType': 'media', 'name': name},
+#        headers = {'Authorization': 'Bearer {}'.format(access_token), 'Content-Type': {'.gif': 'image/gif', '.jpg': 'image/jpeg', '.png': 'image/png'}[os.path.splitext(path)[-1]]},
+#        data = open(path, 'rb').read()
+#    )
+#    assert response.status_code == 200
+    access_key_id = secret.oss['access_key_id']
+    access_key_secret = secret.oss['access_key_secret']
+    bucket_name = secret.oss['bucket_name']
+    endpoint = secret.oss['endpoint']
+    bucket = oss2.Bucket(oss2.Auth(access_key_id, access_key_secret), endpoint, bucket_name)
+    result = bucket.put_object_from_file(name, path)
+    assert result.status == 200
     os.remove(path)
 
 def process(meta, text):
