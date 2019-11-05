@@ -2,3 +2,4 @@ Pillow
 PyMySQL
 requests
 sentry-sdk
+oss2
