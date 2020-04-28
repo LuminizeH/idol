@@ -67,7 +67,7 @@ def deal(connect, blogs):
         romaji = member.get_romaji(author)
 
         indicator('{} {}'.format(author, title))
-
+        # print('%s, %s, %s, %s, %s' % (feed_id, post, member_id, url, title))
         try:
             cursor.execute('insert into feed values(%s, %s, %s, %s, %s, %s, %s, %s)', (feed_id, post, member_id, url, title, snippet, False, 0))
         except Exception as e:

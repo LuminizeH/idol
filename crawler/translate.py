@@ -100,8 +100,8 @@ def translate_unit(matched):
     if no_need_translate(original):
         translation = original
     else:
-        #translation = baidu_translate(original)
-        translation = youdao_translate(original)
+        translation = baidu_translate(original)
+        #translation = youdao_translate(original)
         translation = discard_punctuation(translation)
 
 #     print(original + '\n' + translation + '\n')

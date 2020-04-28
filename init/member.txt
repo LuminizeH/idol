@@ -42,7 +42,11 @@
 0211	伊藤純奈	いとう じゅんな	itou-junna
 0212	鈴木絢音	すずき あやね	suzuki-ayane
 
-# 0214	相楽伊織	さがら いおり	sagara-iori
+0214	相楽伊織	さがら いおり	sagara-iori
+# 9901	西川七海	にしかわ ななみ	nishikawa-nanami
+# 9902	矢田里沙子	やだ りさこ	yada-risako
+# 9903	米徳京花	よねとく きょうか	yonetoku-kyooka
+
 0301	伊藤理々杏	いとう りりあ	itou-riria
 0302	岩本蓮加	いわもと れんか	iwamoto-renka
 0303	梅澤美波	うめざわ みなみ	umezawa-minami
@@ -66,6 +70,11 @@
 0409	筒井あやめ	つつい あやめ	tsutsui-ayame
 0410	早川聖来	はやかわ せいら	hayakawa-seira
 0411	矢久保美緒	やくぼ みお	yakubo-mio
+0412    黒見明香    くろみ はるか   kuromi-haruka
+0413    佐藤璃果    さとう りか satou-rika
+0414    林瑠奈  はやし るな hayashi-runa
+0415    松尾美佑    まつお みゆ matsuo-miyu
+0416    弓木奈於    ゆみき なお yumiki-nao
 
 
 1101	石森虹花	いしもり にじか	ishimori-nijika

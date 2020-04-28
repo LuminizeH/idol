@@ -95,7 +95,7 @@ def download(url, path, meta):
 #     test = requests.get('http://localhost:8080/search?url=' + base64.urlsafe_b64encode(url.encode('utf-8')).decode('utf-8'), allow_redirects = False)
 #     if test.status_code == 302: url = test.headers['location']
 
-    if os.path.exists(path): return 1
+    #if os.path.exists(path): return 1
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'} 
     # proxies = {'http': 'http://127.0.0.1:1080', 'https': 'http://127.0.0.1:1080'}
 
@@ -113,19 +113,34 @@ def download(url, path, meta):
                 if response.text.find(u'この画像は保存期間が終了したため削除されました') != -1:
                     # If photo is outdated, try to find in aidoru.tk.
                     # If aidoru.tk have not archived this photo, try to download raw low-res thumbnail.
-                    b=path.replace('-', '/').replace('.jpg', '').split('/')
+                    b=path.replace('-', '/').replace('.jpg', '').replace('.png', '').split('/')
+                    #print("{}, {}".format(b[4][6:8], b[6])) 
                     url_available = [
-                            path.replace('../photo', 'https://cdn.aidoru.tk'),
+                            # path.replace('../photo', 'https://cdn.aidoru.tk'),
                             'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2], b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
                             'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2], b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
                             'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2], b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
                             'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2].replace("tou", "to"), b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
                             'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2].replace("tou", "to"), b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
                             'https://img.nogizaka46.com/blog/{}.{}/img/{}/{}/{}/{}/{}.jpeg'.format(b[3], b[2].replace("tou", "to"), b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            
+                            'https://img.nogizaka46.com/blog/kenkyusei/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/kenkyusei/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/kenkyusei/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+
+                            'https://img.nogizaka46.com/blog/third/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/third/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/third/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+
+                            'https://img.nogizaka46.com/blog/fourth/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], b[4][6:8], meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/fourth/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], str(int(b[4][6:8]) + 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+                            'https://img.nogizaka46.com/blog/fourth/img/{}/{}/{}/{}/{}.jpeg'.format(b[4][0:4], b[4][4:6], str(int(b[4][6:8]) - 1).zfill(2), meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
+
+                            # 'https://img.nogizaka46.com/blog/miria.watanabe/img/2017/10/31/{}/{}.jpeg'.format(meta['photo_path_id'], str(int(b[6]) - 1).zfill(4)),
                     ]
-                    for i in range(len(url_available)):
-                        url = url_available[i]
-                        response = session.get(url, timeout = 5)
+                    for url in url_available:
+                        response = session.get(url, timeout = 20)
+                        #print('Trying %s ...' % url)
                         if response.text.find(u'NoSuchKey') == -1 and response.status_code != 404:
                             find_photo = 1
                             break
